@@ -1,0 +1,2 @@
+DigitalOcean: DIGITALOCEAN_API_TOKEN env variable
+AWS: AWS_PROFILE

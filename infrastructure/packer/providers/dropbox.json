@@ -1,0 +1,84 @@
+{
+  "builders": [
+    {
+      "type": "digitalocean",
+      "droplet_name": "ansible-base-builder",
+      "snapshot_name": "ansible-base-vivid-{{timestamp}}",
+      "image": "ubuntu-18-04-x64",
+      "region": "ams3",
+      "size": "512mb"
+    }
+  ],
+"provisioners": [
+    {
+      "inline": [
+        "# Install docker",
+        "apt-get update -qq",
+        "apt-get install -qq software-properties-common",
+        "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -",
+        "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\"",
+        "apt-get install -qq docker-ce",
+
+        "groupmod --gid 999 docker",
+        "usermod --append --groups docker ubuntu",
+
+        "# Install nvidia cuda",
+        "apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1810/x86_64/7fa2af80.pub",
+        "wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1810/x86_64/cuda-repo-ubuntu1810_10.1.168-1_amd64.deb",
+        "dpkg -i cuda-repo-ubuntu1810_10.1.168-1_amd64.deb",
+        "apt-get -qq update",
+        "DEBIAN_FRONTEND=noninteractive apt-get install -qq cuda",
+
+        "# Install nvidia-docker2",
+        "curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -",
+        "curl -s -L https://nvidia.github.io/nvidia-docker/$(. /etc/os-release;echo $ID$VERSION_ID)/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list",
+        "apt-get -qq update",
+        "apt-get install -qq nvidia-docker2",
+
+        "# Cache cloud-computer docker images",
+        "docker pull cloudnativecomputer/alertmanager &",
+        "docker pull cloudnativecomputer/blender &",
+        "docker pull cloudnativecomputer/chrome &",
+        "docker pull cloudnativecomputer/cloud-computer &",
+        "docker pull cloudnativecomputer/cloudstorage &",
+        "docker pull cloudnativecomputer/code &",
+        "docker pull cloudnativecomputer/darktable &",
+        "docker pull cloudnativecomputer/dispatch &",
+        "docker pull cloudnativecomputer/filerun &",
+        "docker pull cloudnativecomputer/gnumeric &",
+        "docker pull cloudnativecomputer/grafana &",
+        "docker pull cloudnativecomputer/kicad &",
+        "docker pull cloudnativecomputer/krita &",
+        "docker pull cloudnativecomputer/launcher &",
+        "docker pull cloudnativecomputer/marketplace &",
+        "docker pull cloudnativecomputer/notion &",
+        "docker pull cloudnativecomputer/onlyoffice-excel &",
+        "docker pull cloudnativecomputer/onlyoffice-powerpoint &",
+        "docker pull cloudnativecomputer/onlyoffice-word &",
+        "docker pull cloudnativecomputer/postman &",
+        "docker pull cloudnativecomputer/prometheus &",
+        "docker pull cloudnativecomputer/skype &",
+        "docker pull cloudnativecomputer/slack &",
+        "docker pull dorowu/ubuntu-desktop-lxde-vnc &",
+        "docker pull dougw/novnc &",
+        "docker pull gliderlabs/logspout &",
+        "docker pull google/cadvisor &",
+        "docker pull google/cloud-sdk &",
+        "docker pull jaegertracing/all-in-one &",
+        "docker pull mariadb &",
+        "docker pull onlyoffice/documentserver &",
+        "docker pull prom/node-exporter &",
+        "docker pull prom/pushgateway &",
+        "docker pull traefik &",
+        "docker pull wernight/docker-compose &",
+        "wait"
+      ],
+      "type": "shell"
+    }
+  ],
+  "variables": {
+    "CLOUD_COMPUTER_CLOUD_PROVIDER_PROJECT": "{{ env `CLOUD_COMPUTER_CLOUD_PROVIDER_PROJECT` }}",
+    "CLOUD_COMPUTER_CREDENTIALS": "{{ env `CLOUD_COMPUTER_CREDENTIALS` }}",
+    "CLOUD_COMPUTER_IMAGE": "{{ env `CLOUD_COMPUTER_IMAGE` }}"
+  }
+}
