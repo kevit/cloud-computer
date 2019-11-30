@@ -2,14 +2,17 @@
   "builders": [
     {
       "type": "digitalocean",
-      "droplet_name": "ansible-base-builder",
-      "snapshot_name": "ansible-base-vivid-{{timestamp}}",
+      "droplet_name": "cloud-computer",
+      "snapshot_name": "cloud-computer-packer-{{timestamp}}",
       "image": "ubuntu-18-04-x64",
+      "ssh_username": "root",
       "region": "ams3",
-      "size": "512mb"
+      "size": "s-1vcpu-2gb"
     }
   ],
 "provisioners": [
+
+
     {
       "inline": [
         "# Install docker",
@@ -20,7 +23,6 @@
         "apt-get install -qq docker-ce",
 
         "groupmod --gid 999 docker",
-        "usermod --append --groups docker ubuntu",
 
         "# Install nvidia cuda",
         "apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1810/x86_64/7fa2af80.pub",

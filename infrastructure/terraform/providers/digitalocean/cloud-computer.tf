@@ -1,6 +1,4 @@
 locals {
-  environment_name = "cloud-computer-${var.CLOUD_COMPUTER_HOST_ID}-${random_id.instance_id.hex}"
-  machine_type = "nano"
 }
 
 module "cloud-computer" {
@@ -8,17 +6,17 @@ module "cloud-computer" {
 
   droplet_count = 1
 
-  droplet_name       = "${var.environment_name}"
-  droplet_size       = "${var.machine_type}"
+  droplet_name       = "cloud-computer"
+  droplet_size =  "s-1vcpu-2gb"
   monitoring         = true
   private_networking = true
   ipv6               = true
   floating_ip        = true
-  block_storage_size = 5
-  tags               = ["${digitalocean_tag.ENV_example.id}", "${digitalocean_tag.ROLE_web.id}"]
+  block_storage_size = 50
+  tags               = [""]
   user_data          = "${file("user-data.web")}"
 }
-
+resource "digitalocean_droplet" "cloud-computer" {
   provisioner "remote-exec" {
     connection {
       agent = false
@@ -54,9 +52,5 @@ module "cloud-computer" {
       "# Start the cloud computer",
       "docker_run_non-root yarn --cwd infrastructure/cloud-computer start",
     ]
-  }
-
-  scheduling {
-    on_host_maintenance = "TERMINATE"
   }
 }
