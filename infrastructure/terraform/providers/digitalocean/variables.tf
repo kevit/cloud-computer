@@ -72,7 +72,10 @@ variable "GIT_COMMITTER_NAME" {
   description = "The current git user name."
   default = ""
 }
+data "digitalocean_droplet" "cloud-computer" {
+  name = "cloud-computer"
+}
 
 output "ip" {
-  value = "${google_compute_address.cloud-computer.address}"
+  value = "${data.digitalocean_droplet.cloud-computer.ipv4_address}"
 }
